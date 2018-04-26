@@ -641,11 +641,8 @@ time_t sys___time(time_t *secs, unsigned long *nsecs, int* retval)
     }
     else
     {
-        time_t temp1;
-        unsigned long temp2;
-        gettime(&temp1,&temp2);
-        *retval = (int*) temp1;
-        return 0;
+        *retval = -1;
+        return EINVAL;
     }
 
 }
