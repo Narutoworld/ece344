@@ -67,8 +67,7 @@ ram_stealmem(unsigned long npages)
 	u_int32_t paddr;
 
 	if (firstpaddr + size > lastpaddr) {
-//		return 0;
-		firstpaddr = firstfree - MIPS_KSEG0;
+		return 0;
 	}
 
 	paddr = firstpaddr;
