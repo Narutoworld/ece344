@@ -612,6 +612,22 @@ int sys__exit(struct trapframe *tf)
     return 0;
 }
 
+time_t sys___time(time_t *secs, unsigned long *nsecs, int* retval)
+{
+	struct timeval tv;
+	if (gettimeofday(&tv, NULL) < 0) {
+		return -1;
+	}
+	if (secs == 0) {
+		return EFAULT;
+	}
+	if (nsecs == 0) {
+		return EFAULT;
+	}
+    *retval = (int*) tv.tv_sec;
+    return 0;
+}
+
 void mips_syscall(struct trapframe *tf)
 {
     int callno;
@@ -667,6 +683,10 @@ void mips_syscall(struct trapframe *tf)
         err = sys__exit(tf);
         break;
         /* Add stuff here */
+    
+    case SYS___time:
+        err = sys___time((time_t*)tf->tf_a0, (unsigned long*)tf->tf_a1, &retval);
+        break;
 
     default:
         kprintf("Unknown syscall %d\n", callno);
