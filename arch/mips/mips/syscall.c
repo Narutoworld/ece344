@@ -619,9 +619,35 @@ time_t sys___time(time_t *secs, unsigned long *nsecs, int* retval)
         *retval = -1; 
         return EFAULT;
     }
-    gettime(secs,nsecs);
-    *retval = (int*)secs;
-    return 0;
+    if(secs != NULL && nsecs != NULL)
+    {
+        gettime(secs,nsecs);
+        *retval = (int*)secs;
+        return 0;
+    }
+    else if(secs == NULL && nsecs != NULL)
+    {
+        time_t temp;
+        gettime(&temp, nsecs);
+        *retval = (int*) temp;
+        return 0;
+    }
+    else if(secs != NULL && nsecs == NULL)
+    {
+        unsigned long temp;
+        gettime(secs, &temp);
+        *retval = (int*) secs;
+        return 0;
+    }
+    else
+    {
+        time_t temp1;
+        unsigned long temp2;
+        gettime(&temp1,&temp2);
+        *retval = (int*) temp1;
+        return 0;
+    }
+
 }
 
 // time_t sys___time(time_t *seconds, unsigned long *nanoseconds, int* retval){
