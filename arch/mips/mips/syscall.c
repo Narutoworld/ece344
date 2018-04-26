@@ -647,35 +647,27 @@ time_t sys___time(time_t *secs, unsigned long *nsecs, int* retval)
 
 }
 
-// time_t sys___time(time_t *seconds, unsigned long *nanoseconds, int* retval){
-//     if (seconds == NULL && nanoseconds == NULL){
-//         return EINVAL;
-//     }
-//     if (seconds == 0x40000000 || seconds == 0x80000000 || nanoseconds == 0x80000000 || nanoseconds == 0x40000000){
-//         return EFAULT;
-//     }
-//     if (seconds == NULL){
-// //        unsigned long kernel_nano;
-//         time_t get_seconds;
-//         gettime(&get_seconds, (u_int32_t)nanoseconds);
-// //        kprintf("\nnano with no seconds: %d\n", (int)*get_seconds);
-//         *retval = (int)get_seconds;
-//         return 0;
-//     }
-//     else if (nanoseconds == NULL){
-//         u_int32_t get_nano;
-//         gettime(seconds, &get_nano);
-// //        kprintf("\nsecond with no nanos: %d\n", (int)*seconds);
-//         *retval = (int)*seconds;
-//         return 0;
-//     }
-//     else {
-//         gettime(seconds, (u_int32_t)nanoseconds);
-// //        kprintf("\nnano: %d,,,seconds: %d\n", (int)*seconds, (int)*nanoseconds);
-//         *retval = (int)*seconds;
-//         return 0;
-//     }
-// }
+int sys_sbrk(intptr_t amount, int* retval)
+{
+    if (amount < -8191)
+    {
+        *retval = -1;
+        return EINVAL;
+    }
+    if (amount > 4096*1024*256 -1)
+    {
+        *retval = -1;
+        return ENOMEM;
+    }
+    if ((amount % 4) != 0)
+    {
+        *retval = -1;
+        return EINVAL;
+    }
+    *retval = 0;
+    return 0;
+}
+
 
 void mips_syscall(struct trapframe *tf)
 {
@@ -735,6 +727,10 @@ void mips_syscall(struct trapframe *tf)
     
     case SYS___time:
         err = sys___time((time_t*)tf->tf_a0, (unsigned long*)tf->tf_a1, &retval);
+        break;
+
+    case SYS_sbrk:
+        err = sys_sbrk(tf->tf_a0, &retval);
         break;
 
     default:
