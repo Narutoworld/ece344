@@ -16,6 +16,7 @@
 #include <test.h>
 #include <synch.h>
 #include <vm.h>
+#include <time.h>
 /*
  * System call handler.
  *
