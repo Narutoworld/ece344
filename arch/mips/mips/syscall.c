@@ -614,7 +614,7 @@ int sys__exit(struct trapframe *tf)
 
 time_t sys___time(time_t *secs, unsigned long *nsecs, int* retval)
 {   
-    if(secs == NULL || nsecs == NULL || secs == 0x40000000 || secs == 0x80000000 || nsecs == 0x40000000 || nsecs == 0x80000000)
+    if(secs == 0x40000000 || secs == 0x80000000 || nsecs == 0x40000000 || nsecs == 0x80000000)
     {
         *retval = -1; 
         return EFAULT;
