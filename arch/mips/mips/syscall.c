@@ -612,51 +612,42 @@ int sys__exit(struct trapframe *tf)
     return 0;
 }
 
-// time_t sys___time(time_t *secs, unsigned long *nsecs, int* retval)
-// {
-// 	struct timeval tv;
-// 	if (gettimeofday(&tv, NULL) < 0) {
-// 		return -1;
-// 	}
-// 	if (secs == 0) {
-// 		return EFAULT;
-// 	}
-// 	if (nsecs == 0) {
-// 		return EFAULT;
-// 	}
-//     *retval = (int*) tv.tv_sec;
-//     return 0;
-// }
-
-time_t sys___time(time_t *seconds, unsigned long *nanoseconds, int* retval){
-    if (seconds == NULL && nanoseconds == NULL){
-        return EINVAL;
-    }
-    if (seconds == 0x40000000 || seconds == 0x80000000 || nanoseconds == 0x80000000 || nanoseconds == 0x40000000){
-        return EFAULT;
-    }
-    if (seconds == NULL){
-//        unsigned long kernel_nano;
-        time_t get_seconds;
-        gettime(&get_seconds, (u_int32_t)nanoseconds);
-//        kprintf("\nnano with no seconds: %d\n", (int)*get_seconds);
-        *retval = (int)get_seconds;
-        return 0;
-    }
-    else if (nanoseconds == NULL){
-        u_int32_t get_nano;
-        gettime(seconds, &get_nano);
-//        kprintf("\nsecond with no nanos: %d\n", (int)*seconds);
-        *retval = (int)*seconds;
-        return 0;
-    }
-    else {
-        gettime(seconds, (u_int32_t)nanoseconds);
-//        kprintf("\nnano: %d,,,seconds: %d\n", (int)*seconds, (int)*nanoseconds);
-        *retval = (int)*seconds;
-        return 0;
-    }
+time_t sys___time(time_t *secs, unsigned long *nsecs, int* retval)
+{   
+    gettime(secs,nsecs);
+    *retval = (int*)secs;
+    return 0;
 }
+
+// time_t sys___time(time_t *seconds, unsigned long *nanoseconds, int* retval){
+//     if (seconds == NULL && nanoseconds == NULL){
+//         return EINVAL;
+//     }
+//     if (seconds == 0x40000000 || seconds == 0x80000000 || nanoseconds == 0x80000000 || nanoseconds == 0x40000000){
+//         return EFAULT;
+//     }
+//     if (seconds == NULL){
+// //        unsigned long kernel_nano;
+//         time_t get_seconds;
+//         gettime(&get_seconds, (u_int32_t)nanoseconds);
+// //        kprintf("\nnano with no seconds: %d\n", (int)*get_seconds);
+//         *retval = (int)get_seconds;
+//         return 0;
+//     }
+//     else if (nanoseconds == NULL){
+//         u_int32_t get_nano;
+//         gettime(seconds, &get_nano);
+// //        kprintf("\nsecond with no nanos: %d\n", (int)*seconds);
+//         *retval = (int)*seconds;
+//         return 0;
+//     }
+//     else {
+//         gettime(seconds, (u_int32_t)nanoseconds);
+// //        kprintf("\nnano: %d,,,seconds: %d\n", (int)*seconds, (int)*nanoseconds);
+//         *retval = (int)*seconds;
+//         return 0;
+//     }
+// }
 
 void mips_syscall(struct trapframe *tf)
 {
