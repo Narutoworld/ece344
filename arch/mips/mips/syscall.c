@@ -628,7 +628,7 @@ int sys__exit(struct trapframe *tf)
 //     return 0;
 // }
 
-time_t sys__time(time_t *seconds, unsigned long *nanoseconds, int* retval){
+time_t sys___time(time_t *seconds, unsigned long *nanoseconds, int* retval){
     if (seconds == NULL && nanoseconds == NULL){
         return EINVAL;
     }
